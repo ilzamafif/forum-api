@@ -1,5 +1,5 @@
 /* istanbul ignore file */
-const pool = require('../../forum-api/forum-api/src/Infrastructures/database/postgres/pool');
+const pool = require('../src/Infrastructures/database/postgres/pool');
 
 const UsersTableTestHelper = {
   async addUser({

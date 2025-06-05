@@ -1,7 +1,7 @@
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
-const InvariantError = require('../../../../../forum-api/forum-api/src/commons/exceptions/InvariantError');
-const RegisterUser = require('../../../../../forum-api/forum-api/src/Domains/users/entities/RegisterUser');
-const RegisteredUser = require('../../../../../forum-api/forum-api/src/Domains/users/entities/RegisteredUser');
+const InvariantError = require('../../../commons/exceptions/InvariantError');
+const RegisterUser = require('../../../Domains/users/entities/RegisterUser');
+const RegisteredUser = require('../../../Domains/users/entities/RegisteredUser');
 const pool = require('../../database/postgres/pool');
 const UserRepositoryPostgres = require('../UserRepositoryPostgres');
 
