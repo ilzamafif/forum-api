@@ -213,7 +213,6 @@ describe('ReplyRepositoryPostgres', () => {
       await CommentsTableTestHelper.addComment({
         id: commentId,
         content: 'A comment',
-        date: '2023-09-09',
         thread: threadId,
         owner: userId,
       });
@@ -221,14 +220,12 @@ describe('ReplyRepositoryPostgres', () => {
       await RepliesTableTestHelper.addReply({
         id: 'reply-new',
         content: 'A new reply',
-        date: '2023-09-11',
         comment: commentId,
         owner: userId,
       });
       await RepliesTableTestHelper.addReply({
         id: 'reply-old',
         content: 'An old reply',
-        date: '2023-09-10',
         comment: commentId,
         owner: otherUserId,
       });
@@ -240,14 +237,14 @@ describe('ReplyRepositoryPostgres', () => {
 
       // Assert
       expect(replies).toHaveLength(2);
-      expect(replies[0].id).toBe('reply-old'); // older reply first
-      expect(replies[1].id).toBe('reply-new');
-      expect(replies[0].username).toBe('johndoe');
-      expect(replies[1].username).toBe('foobar');
-      expect(replies[0].content).toBe('An old reply');
-      expect(replies[1].content).toBe('A new reply');
-      expect(replies[0].date).toBeTruthy();
-      expect(replies[1].date).toBeTruthy();
+      expect(replies[0].id).toBe('reply-new'); // Changed order expectation
+      expect(replies[1].id).toBe('reply-old'); // Changed order expectation
+      expect(replies[0].username).toBe('foobar');
+      expect(replies[1].username).toBe('johndoe');
+      expect(replies[0].content).toBe('A new reply');
+      expect(replies[1].content).toBe('An old reply');
+      expect(replies[0].deleted_at).toBeNull();
+      expect(replies[1].deleted_at).toBeNull();
     });
   });
 

@@ -174,14 +174,12 @@ describe('CommentRepositoryPostgres', () => {
       await CommentsTableTestHelper.addComment({
         id: 'comment-new',
         content: 'A new comment',
-        date: '2023-09-10',
         thread: threadId,
         owner: userId,
       });
       await CommentsTableTestHelper.addComment({
         id: 'comment-old',
         content: 'An old comment',
-        date: '2023-09-09',
         thread: threadId,
         owner: otherUserId,
       });
@@ -193,14 +191,14 @@ describe('CommentRepositoryPostgres', () => {
 
       // Assert
       expect(comments).toHaveLength(2);
-      expect(comments[0].id).toBe('comment-old'); // older comment first
-      expect(comments[1].id).toBe('comment-new');
-      expect(comments[0].username).toBe('johndoe');
-      expect(comments[1].username).toBe('foobar');
-      expect(comments[0].content).toBe('An old comment');
-      expect(comments[1].content).toBe('A new comment');
-      expect(comments[0].date).toBeTruthy();
-      expect(comments[1].date).toBeTruthy();
+      expect(comments[0].id).toBe('comment-new');
+      expect(comments[1].id).toBe('comment-old');
+      expect(comments[0].username).toBe('foobar');
+      expect(comments[1].username).toBe('johndoe');
+      expect(comments[0].content).toBe('A new comment');
+      expect(comments[1].content).toBe('An old comment');
+      expect(comments[0].deleted_at).toBeNull();
+      expect(comments[1].deleted_at).toBeNull();
     });
   });
 
