@@ -1,7 +1,7 @@
-const NotFoundError = require('../../Commons/exceptions/NotFoundError');
-const AuthorizationError = require('../../Commons/exceptions/AuthorizationError');
-const AddedComment = require('../../Domains/comments/entities/AddedComment');
-const CommentRepository = require('../../Domains/comments/CommentRepository');
+const NotFoundError = require('../../commons/exceptions/NotFoundError');
+const AuthorizationError = require('../../commons/exceptions/AuthorizationError');
+const AddedComment = require('../../domains/comments/entities/AddedComment');
+const CommentRepository = require('../../domains/comments/CommentRepository');
 
 class CommentRepositoryPostgres extends CommentRepository {
   constructor(pool, idGenerator) {

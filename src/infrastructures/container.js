@@ -9,14 +9,14 @@ const Jwt = require('@hapi/jwt');
 const pool = require('./database/postgres/pool');
 
 // service (repository, helper, manager, etc)
-const PasswordHash = require('../Applications/security/PasswordHash');
-const AuthenticationTokenManager = require('../Applications/security/AuthenticationTokenManager');
-const UserRepository = require('../Domains/users/UserRepository');
-const AuthenticationRepository = require('../Domains/authentications/AuthenticationRepository');
-const ThreadRepository = require('../Domains/threads/ThreadRepository');
-const CommentRepository = require('../Domains/comments/CommentRepository');
-const ReplyRepository = require('../Domains/replies/ReplyRepository');
-const CommentLikeRepository = require('../Domains/likes/CommentLikeRepository');
+const PasswordHash = require('../applications/security/PasswordHash');
+const AuthenticationTokenManager = require('../applications/security/AuthenticationTokenManager');
+const UserRepository = require('../domains/users/UserRepository');
+const AuthenticationRepository = require('../domains/authentications/AuthenticationRepository');
+const ThreadRepository = require('../domains/threads/ThreadRepository');
+const CommentRepository = require('../domains/comments/CommentRepository');
+const ReplyRepository = require('../domains/replies/ReplyRepository');
+const CommentLikeRepository = require('../domains/likes/CommentLikeRepository');
 
 const BcryptPasswordHash = require('./security/BcryptPasswordHash');
 const JwtTokenManager = require('./security/JwtTokenManager');
@@ -28,17 +28,17 @@ const ReplyRepositoryPostgres = require('./repository/ReplyRepositoryPostgres');
 const CommentLikeRepositoryPostgres = require('./repository/CommentLikeRepositoryPostgres');
 
 // use case
-const AddUserUseCase = require('../Applications/use_case/AddUserUseCase');
-const LoginUserUseCase = require('../Applications/use_case/LoginUserUseCase');
-const LogoutUserUseCase = require('../Applications/use_case/LogoutUserUseCase');
-const RefreshAuthenticationUseCase = require('../Applications/use_case/RefreshAuthenticationUseCase');
-const AddThreadUseCase = require('../Applications/use_case/AddThreadUseCase');
-const GetThreadDetailUseCase = require('../Applications/use_case/GetThreadDetailUseCase');
-const AddCommentUseCase = require('../Applications/use_case/AddCommentUseCase');
-const DeleteCommentUseCase = require('../Applications/use_case/DeleteCommentUseCase');
-const AddReplyUseCase = require('../Applications/use_case/AddReplyUseCase');
-const DeleteReplyUseCase = require('../Applications/use_case/DeleteReplyUseCase');
-const LikeOrDislikeCommentUseCase = require('../Applications/use_case/LikeOrDislikeCommentUseCase');
+const AddUserUseCase = require('../applications/use_case/AddUserUseCase');
+const LoginUserUseCase = require('../applications/use_case/LoginUserUseCase');
+const LogoutUserUseCase = require('../applications/use_case/LogoutUserUseCase');
+const RefreshAuthenticationUseCase = require('../applications/use_case/RefreshAuthenticationUseCase');
+const AddThreadUseCase = require('../applications/use_case/AddThreadUseCase');
+const GetThreadDetailUseCase = require('../applications/use_case/GetThreadDetailUseCase');
+const AddCommentUseCase = require('../applications/use_case/AddCommentUseCase');
+const DeleteCommentUseCase = require('../applications/use_case/DeleteCommentUseCase');
+const AddReplyUseCase = require('../applications/use_case/AddReplyUseCase');
+const DeleteReplyUseCase = require('../applications/use_case/DeleteReplyUseCase');
+const LikeOrDislikeCommentUseCase = require('../applications/use_case/LikeOrDislikeCommentUseCase');
 
 // creating container
 const container = createContainer();

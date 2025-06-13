@@ -1,4 +1,4 @@
-const LikeOrDislikeCommentUseCase = require('../../../../Applications/use_case/LikeOrDislikeCommentUseCase');
+const LikeOrDislikeCommentUseCase = require('../../../../applications/use_case/LikeOrDislikeCommentUseCase');
 
 class LikesHandler {
   constructor(container) {
