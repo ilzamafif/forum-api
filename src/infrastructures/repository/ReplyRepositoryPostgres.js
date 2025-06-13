@@ -1,5 +1,5 @@
-const NotFoundError = require('../../commons/exceptions/NotFoundError');
-const AuthorizationError = require('../../commons/exceptions/AuthorizationError');
+const NotFoundError = require('../../Commons/exceptions/NotFoundError');
+const AuthorizationError = require('../../Commons/exceptions/AuthorizationError');
 const AddedReply = require('../../Domains/replies/entities/AddedReply');
 const ReplyRepository = require('../../Domains/replies/ReplyRepository');
 
@@ -10,10 +10,10 @@ class ReplyRepositoryPostgres extends ReplyRepository {
     this._idGenerator = idGenerator;
   }
 
-  async checkReplyAvailability(id) {
+  async checkReplyAvailability(replyId, commentId) {
     const query = {
-      text: 'SELECT id, deleted_at FROM replies WHERE id = $1',
-      values: [id],
+      text: 'SELECT id, is_delete, comment FROM replies WHERE id = $1',
+      values: [replyId],
     };
 
     const result = await this._pool.query(query);
@@ -22,8 +22,12 @@ class ReplyRepositoryPostgres extends ReplyRepository {
       throw new NotFoundError('balasan tidak ditemukan');
     }
 
-    if (result.rows[0].deleted_at) {
+    if (result.rows[0].is_delete) {
       throw new NotFoundError('balasan tidak valid');
+    }
+
+    if (result.rows[0].comment !== commentId) {
+      throw new NotFoundError('balasan dalam komentar tidak ditemukan');
     }
   }
 
@@ -53,12 +57,12 @@ class ReplyRepositoryPostgres extends ReplyRepository {
 
     const result = await this._pool.query(query);
 
-    return new AddedReply({ ...result.rows[0] });
+    return new AddedReply(result.rows[0]);
   }
 
   async getRepliesByCommentId(commentId) {
     const query = {
-      text: 'SELECT replies.id, users.username, replies.date, replies.content, replies.deleted_at FROM replies LEFT JOIN users ON users.id = replies.owner WHERE replies.comment = $1 ORDER BY replies.date ASC',
+      text: 'SELECT replies.id, users.username, replies.date, replies.content, replies.is_delete FROM replies LEFT JOIN users ON users.id = replies.owner WHERE replies.comment = $1 ORDER BY replies.date ASC',
       values: [commentId],
     };
 
@@ -67,12 +71,26 @@ class ReplyRepositoryPostgres extends ReplyRepository {
     return result.rows;
   }
 
-  async deleteReplyById(id) {
-    const date = new Date().toISOString();
-
+  async getRepliesByThreadId(threadId) {
     const query = {
-      text: 'UPDATE replies SET deleted_at = $1 WHERE id = $2',
-      values: [date, id],
+      text: `SELECT replies.*, users.username 
+      FROM replies
+      LEFT JOIN users ON users.id = replies.owner
+      LEFT JOIN comments ON comments.id = replies.comment
+      WHERE comments.thread = $1 AND comments.is_delete = false
+      ORDER BY replies.date ASC`,
+      values: [threadId],
+    };
+
+    const result = await this._pool.query(query);
+
+    return result.rows;
+  }
+
+  async deleteReplyById(id) {
+    const query = {
+      text: 'UPDATE replies SET is_delete = true WHERE id = $1',
+      values: [id],
     };
 
     await this._pool.query(query);

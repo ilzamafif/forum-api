@@ -5,7 +5,6 @@ const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
 describe('DeleteCommentUseCase', () => {
   it('should orchestrating the delete comment action correctly', async () => {
     // Arrange
-    const userId = 'user-123';
     const useCaseParams = {
       threadId: 'thread-123',
       commentId: 'comment-123',
@@ -16,14 +15,10 @@ describe('DeleteCommentUseCase', () => {
     const mockCommentRepository = new CommentRepository();
 
     /** mocking needed function */
-    mockThreadRepository.checkThreadAvailability = jest.fn()
-      .mockImplementation(() => Promise.resolve());
-    mockCommentRepository.checkCommentAvailability = jest.fn()
-      .mockImplementation(() => Promise.resolve());
-    mockCommentRepository.verifyCommentOwner = jest.fn()
-      .mockImplementation(() => Promise.resolve());
-    mockCommentRepository.deleteCommentById = jest.fn()
-      .mockImplementation(() => Promise.resolve());
+    mockThreadRepository.checkThreadAvailability = jest.fn(() => Promise.resolve());
+    mockCommentRepository.checkCommentAvailability = jest.fn(() => Promise.resolve());
+    mockCommentRepository.verifyCommentOwner = jest.fn(() => Promise.resolve());
+    mockCommentRepository.deleteCommentById = jest.fn(() => Promise.resolve());
 
     /** creating use case instance */
     const deleteCommentUseCase = new DeleteCommentUseCase({
@@ -32,7 +27,7 @@ describe('DeleteCommentUseCase', () => {
     });
 
     // Action
-    await deleteCommentUseCase.execute(userId, useCaseParams);
+    await deleteCommentUseCase.execute('user-123', useCaseParams);
 
     // Assert
     expect(mockThreadRepository.checkThreadAvailability).toHaveBeenCalledWith(
@@ -40,11 +35,14 @@ describe('DeleteCommentUseCase', () => {
     );
     expect(mockCommentRepository.checkCommentAvailability).toHaveBeenCalledWith(
       useCaseParams.commentId,
+      useCaseParams.threadId,
     );
     expect(mockCommentRepository.verifyCommentOwner).toHaveBeenCalledWith(
       useCaseParams.commentId,
-      userId,
+      'user-123',
     );
-    expect(mockCommentRepository.deleteCommentById).toHaveBeenCalledWith(useCaseParams.commentId);
+    expect(mockCommentRepository.deleteCommentById).toHaveBeenCalledWith(
+      useCaseParams.commentId,
+    );
   });
 });

@@ -2,8 +2,8 @@ const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
 const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper');
 const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelper');
 const RepliesTableTestHelper = require('../../../../tests/RepliesTableTestHelper');
-const NotFoundError = require('../../../commons/exceptions/NotFoundError');
-const AuthorizationError = require('../../../commons/exceptions/AuthorizationError');
+const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
+const AuthorizationError = require('../../../Commons/exceptions/AuthorizationError');
 const NewReply = require('../../../Domains/replies/entities/NewReply');
 const AddedReply = require('../../../Domains/replies/entities/AddedReply');
 const pool = require('../../database/postgres/pool');
@@ -28,7 +28,7 @@ describe('ReplyRepositoryPostgres', () => {
 
       // Action & Assert
       await expect(replyRepositoryPostgres.checkReplyAvailability('reply-123'))
-        .rejects.toThrowError(NotFoundError);
+        .rejects.toThrowError(new NotFoundError('balasan tidak ditemukan'));
     });
 
     it('should throw NotFoundError when reply is deleted', async () => {
@@ -49,14 +49,41 @@ describe('ReplyRepositoryPostgres', () => {
         id: replyId,
         comment: commentId,
         owner: userId,
-        deletedAt: new Date().toISOString(), // reply is soft deleted
+        isDelete: true, // reply is soft deleted
       });
 
       const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool, {});
 
       // Action & Assert
-      await expect(replyRepositoryPostgres.checkReplyAvailability('reply-123'))
-        .rejects.toThrowError(NotFoundError);
+      await expect(replyRepositoryPostgres.checkReplyAvailability('reply-123', commentId))
+        .rejects.toThrowError(new NotFoundError('balasan tidak valid'));
+    });
+
+    it('should throw NotFoundError when reply is npt found in comment', async () => {
+      // Arrange
+      const userId = 'user-123';
+      const threadId = 'thread-123';
+      const commentId = 'comment-123';
+      const replyId = 'reply-123';
+
+      await UsersTableTestHelper.addUser({ id: userId });
+      await ThreadsTableTestHelper.addThread({ id: threadId, owner: userId });
+      await CommentsTableTestHelper.addComment({
+        id: commentId,
+        thread: threadId,
+        owner: userId,
+      });
+      await RepliesTableTestHelper.addReply({
+        id: replyId,
+        comment: commentId,
+        owner: userId,
+      });
+
+      const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool, {});
+
+      // Action & Assert
+      await expect(replyRepositoryPostgres.checkReplyAvailability('reply-123', 'other-comment'))
+        .rejects.toThrowError(new NotFoundError('balasan dalam komentar tidak ditemukan'));
     });
 
     it('should not throw NotFoundError when reply available', async () => {
@@ -82,7 +109,7 @@ describe('ReplyRepositoryPostgres', () => {
       const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool, {});
 
       // Action & Assert
-      await expect(replyRepositoryPostgres.checkReplyAvailability(replyId))
+      await expect(replyRepositoryPostgres.checkReplyAvailability(replyId, commentId))
         .resolves.not.toThrowError(NotFoundError);
     });
   });
@@ -213,6 +240,7 @@ describe('ReplyRepositoryPostgres', () => {
       await CommentsTableTestHelper.addComment({
         id: commentId,
         content: 'A comment',
+        date: '2023-09-09',
         thread: threadId,
         owner: userId,
       });
@@ -220,12 +248,14 @@ describe('ReplyRepositoryPostgres', () => {
       await RepliesTableTestHelper.addReply({
         id: 'reply-new',
         content: 'A new reply',
+        date: '2023-09-11',
         comment: commentId,
         owner: userId,
       });
       await RepliesTableTestHelper.addReply({
         id: 'reply-old',
         content: 'An old reply',
+        date: '2023-09-10',
         comment: commentId,
         owner: otherUserId,
       });
@@ -237,19 +267,87 @@ describe('ReplyRepositoryPostgres', () => {
 
       // Assert
       expect(replies).toHaveLength(2);
-      expect(replies[0].id).toBe('reply-new'); // Changed order expectation
-      expect(replies[1].id).toBe('reply-old'); // Changed order expectation
-      expect(replies[0].username).toBe('foobar');
-      expect(replies[1].username).toBe('johndoe');
-      expect(replies[0].content).toBe('A new reply');
-      expect(replies[1].content).toBe('An old reply');
-      expect(replies[0].deleted_at).toBeNull();
-      expect(replies[1].deleted_at).toBeNull();
+      expect(replies[0].id).toBe('reply-old'); // older reply first
+      expect(replies[1].id).toBe('reply-new');
+      expect(replies[0].username).toBe('johndoe');
+      expect(replies[1].username).toBe('foobar');
+      expect(replies[0].content).toBe('An old reply');
+      expect(replies[1].content).toBe('A new reply');
+      expect(replies[0].date).toBeTruthy();
+      expect(replies[1].date).toBeTruthy();
+    });
+  });
+
+  describe('getRepliesByThreadId function', () => {
+    it('should return comment replies correctly', async () => {
+      // Arrange
+      const userId = 'user-123';
+      const otherUserId = 'user-456';
+      const threadId = 'thread-123';
+      const commentId = 'comment-123';
+
+      await UsersTableTestHelper.addUser({ id: userId, username: 'foobar' });
+      await UsersTableTestHelper.addUser({ id: otherUserId, username: 'johndoe' });
+      await ThreadsTableTestHelper.addThread({ id: threadId, owner: userId });
+      await CommentsTableTestHelper.addComment({
+        id: commentId,
+        content: 'A comment',
+        date: '2023-09-09',
+        thread: threadId,
+        owner: userId,
+      });
+      await CommentsTableTestHelper.addComment({
+        id: 'comment-2',
+        content: 'A comment',
+        date: '2023-09-09',
+        thread: threadId,
+        owner: userId,
+        isDelete: true,
+      });
+
+      await RepliesTableTestHelper.addReply({
+        id: 'reply-new',
+        content: 'A new reply',
+        date: '2023-09-11',
+        comment: commentId,
+        owner: userId,
+      });
+      await RepliesTableTestHelper.addReply({
+        id: 'reply-old',
+        content: 'An old reply',
+        date: '2023-09-10',
+        comment: commentId,
+        owner: otherUserId,
+      });
+      await RepliesTableTestHelper.addReply({
+        id: 'reply-old-2',
+        content: 'An old reply',
+        date: '2023-09-09',
+        comment: 'comment-2',
+        owner: otherUserId,
+      });
+
+      const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool, {});
+
+      // Action
+      const replies = await replyRepositoryPostgres.getRepliesByThreadId(threadId);
+
+      // Assert
+      expect(replies).toHaveLength(2);
+      expect(replies[0].id).toBe('reply-old'); // older reply first
+      expect(replies[1].id).toBe('reply-new');
+      expect(replies[0].username).toBe('johndoe');
+      expect(replies[1].username).toBe('foobar');
+      expect(replies[0].content).toBe('An old reply');
+      expect(replies[1].content).toBe('A new reply');
+      expect(replies[0].date).toBeTruthy();
+      expect(replies[1].date).toBeTruthy();
+      expect(replies[2]).toBeUndefined(); // reply in deleted comment
     });
   });
 
   describe('deleteReplyById function', () => {
-    it('should soft delete reply and update deleted_at field', async () => {
+    it('should soft delete reply and update is_delete field', async () => {
       // Arrange
       await UsersTableTestHelper.addUser({ id: 'user-123' });
       await ThreadsTableTestHelper.addThread({
@@ -277,7 +375,7 @@ describe('ReplyRepositoryPostgres', () => {
       // Assert
       const replies = await RepliesTableTestHelper.findRepliesById(replyId);
       expect(replies).toHaveLength(1);
-      expect(replies[0].deleted_at).toBeTruthy();
+      expect(replies[0].is_delete).toBeTruthy();
     });
   });
 });

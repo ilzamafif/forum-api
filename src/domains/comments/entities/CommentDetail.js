@@ -1,12 +1,18 @@
+/* eslint-disable camelcase */
 class CommentDetail {
   constructor(payload) {
     this._verifyPayload(payload);
 
-    this.id = payload.id;
-    this.username = payload.username;
-    this.content = payload.content;
-    this.date = payload.date;
-    this.replies = payload.replies;
+    const {
+      id, username, content, date, replies, likeCount, is_delete,
+    } = payload;
+
+    this.id = id;
+    this.username = username;
+    this.content = is_delete ? '**komentar telah dihapus**' : content;
+    this.date = date;
+    this.replies = replies;
+    this.likeCount = likeCount;
   }
 
   _verifyPayload(payload) {
@@ -16,9 +22,10 @@ class CommentDetail {
       content,
       date,
       replies,
+      likeCount,
     } = payload;
 
-    if (!id || !username || !content || !date) {
+    if (!id || !username || !content || !date || likeCount === undefined) {
       throw new Error('COMMENT_DETAIL.NOT_CONTAIN_NEEDED_PROPERTY');
     }
 
@@ -28,6 +35,7 @@ class CommentDetail {
       || typeof content !== 'string'
       || (typeof date !== 'string' && typeof date !== 'object')
       || !Array.isArray(replies)
+      || typeof likeCount !== 'number'
     ) {
       throw new Error('COMMENT_DETAIL.NOT_MEET_DATA_TYPE_SPECIFICATION');
     }

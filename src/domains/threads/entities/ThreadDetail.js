@@ -2,12 +2,16 @@ class ThreadDetail {
   constructor(payload) {
     this._verifyPayload(payload);
 
-    this.id = payload.id;
-    this.title = payload.title;
-    this.body = payload.body;
-    this.date = payload.date;
-    this.username = payload.username;
-    this.comments = payload.comments;
+    const {
+      id, title, body, date, username, comments,
+    } = payload;
+
+    this.id = id;
+    this.title = title;
+    this.body = body;
+    this.date = date;
+    this.username = username;
+    this.comments = comments;
   }
 
   _verifyPayload(payload) {
@@ -28,7 +32,7 @@ class ThreadDetail {
       typeof id !== 'string'
       || typeof title !== 'string'
       || typeof body !== 'string'
-      || (typeof date !== 'string' && typeof date !== 'object')
+      || typeof date !== 'string'
       || typeof username !== 'string'
       || !Array.isArray(comments)
     ) {

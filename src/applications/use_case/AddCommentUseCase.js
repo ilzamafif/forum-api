@@ -1,4 +1,4 @@
-const NewComment = require('../../domains/comments/entities/NewComment');
+const NewComment = require('../../Domains/comments/entities/NewComment');
 
 class AddCommentUseCase {
   constructor({
