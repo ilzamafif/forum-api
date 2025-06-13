@@ -8,3 +8,4 @@ const container = require('./infrastructures/container');
   await server.start();
   console.log(`server start at ${server.info.uri}`);
 })();
+
