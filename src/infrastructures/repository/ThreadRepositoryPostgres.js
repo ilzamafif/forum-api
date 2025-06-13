@@ -1,6 +1,6 @@
-const NotFoundError = require('../../Commons/exceptions/NotFoundError');
-const ThreadRepository = require('../../Domains/threads/ThreadRepository');
-const AddedThread = require('../../Domains/threads/entities/AddedThread');
+const NotFoundError = require('../../commons/exceptions/NotFoundError');
+const ThreadRepository = require('../../domains/threads/ThreadRepository');
+const AddedThread = require('../../domains/threads/entities/AddedThread');
 
 class ThreadRepositoryPostgres extends ThreadRepository {
   constructor(pool, idGenerator) {
