@@ -5,7 +5,7 @@ const CommentsTableTestHelper = {
   async addComment({
     id = 'comment-123',
     content = 'A new comment',
-    date = false,
+    date = new Date().toISOString(),
     thread = 'thread-123',
     owner = 'user-123',
     isDelete = false,
