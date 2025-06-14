@@ -129,4 +129,5 @@ dist
 .pnp.*
 
 config/database/test.json.bak
-
+forum-api-webserver.pem
+package-lock.json
