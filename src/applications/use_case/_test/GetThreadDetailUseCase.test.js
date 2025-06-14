@@ -1,11 +1,11 @@
 const GetThreadDetailUseCase = require('../GetThreadDetailUseCase');
-const ThreadDetail = require('../../../Domains/threads/entities/ThreadDetail');
-const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
-const CommentRepository = require('../../../Domains/comments/CommentRepository');
-const ReplyRepository = require('../../../Domains/replies/ReplyRepository');
-const CommentLikeRepository = require('../../../Domains/likes/CommentLikeRepository');
-const CommentDetail = require('../../../Domains/comments/entities/CommentDetail');
-const ReplyDetail = require('../../../Domains/replies/entities/ReplyDetail');
+const ThreadDetail = require('../../../domains/threads/entities/ThreadDetail');
+const ThreadRepository = require('../../../domains/threads/ThreadRepository');
+const CommentRepository = require('../../../domains/comments/CommentRepository');
+const ReplyRepository = require('../../../domains/replies/ReplyRepository');
+const CommentLikeRepository = require('../../../domains/likes/CommentLikeRepository');
+const CommentDetail = require('../../../domains/comments/entities/CommentDetail');
+const ReplyDetail = require('../../../domains/replies/entities/ReplyDetail');
 
 describe('GetThreadDetailUseCase', () => {
   it('should orchestrating the get thread detail action correctly', async () => {

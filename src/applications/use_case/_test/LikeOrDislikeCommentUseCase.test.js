@@ -1,8 +1,8 @@
 const LikeOrDislikeCommentUseCase = require('../LikeOrDislikeCommentUseCase');
-const CommentLikeRepository = require('../../../Domains/likes/CommentLikeRepository');
-const CommentRepository = require('../../../Domains/comments/CommentRepository');
-const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
-const Like = require('../../../Domains/likes/entities/Like');
+const CommentLikeRepository = require('../../../domains/likes/CommentLikeRepository');
+const CommentRepository = require('../../../domains/comments/CommentRepository');
+const ThreadRepository = require('../../../domains/threads/ThreadRepository');
+const Like = require('../../../domains/likes/entities/Like');
 
 describe('LikeOrDislikeCommentUseCase', () => {
   it('should orchestrating the like comment action correctly if comment is not liked', async () => {

@@ -1,6 +1,6 @@
-const CommentDetail = require('../../Domains/comments/entities/CommentDetail');
-const ReplyDetail = require('../../Domains/replies/entities/ReplyDetail');
-const ThreadDetail = require('../../Domains/threads/entities/ThreadDetail');
+const CommentDetail = require('../../domains/comments/entities/CommentDetail');
+const ReplyDetail = require('../../domains/replies/entities/ReplyDetail');
+const ThreadDetail = require('../../domains/threads/entities/ThreadDetail');
 
 class GetThreadDetailUseCase {
   constructor({

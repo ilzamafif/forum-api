@@ -1,4 +1,4 @@
-const Like = require('../../Domains/likes/entities/Like');
+const Like = require('../../domains/likes/entities/Like');
 
 class LikeOrDislikeCommentUseCase {
   constructor({
