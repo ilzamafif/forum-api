@@ -62,7 +62,7 @@ describe('LikeOrDislikeCommentUseCase', () => {
     mockThreadRepository.checkThreadAvailability = jest.fn(() => Promise.resolve());
     mockCommentRepository.checkCommentAvailability = jest.fn(() => Promise.resolve());
     mockCommentLikeRepository.verifyUserCommentLike = jest.fn(() => Promise.resolve(true));
-    mockCommentLikeRepository.deleteLike = jest.fn(() => Promise.resolve());
+    mockCommentLikeRepository.deleteLike = jest.fn(() => Promise.resolve(true));
 
     /** creating use case instance */
     const likeOrDislikeCommentUseCase = new LikeOrDislikeCommentUseCase({

@@ -153,34 +153,34 @@ describe('CommentLikeRepositoryPostgres', () => {
       expect(threadCommentLikes[0].comment).toStrictEqual(dummyComment.id);
       expect(threadCommentLikes[1].id).toStrictEqual('like-2');
       expect(threadCommentLikes[1].comment).toStrictEqual('other-comment');
+      expect(threadCommentLikes[0].owner).toStrictEqual(dummyUserId);
+      expect(threadCommentLikes[1].owner).toStrictEqual(dummyUserId);
     });
   });
 
   describe('deleteLike', () => {
-    it('should delete a like from the database', async () => {
+    it('should delete a like from the database and return true', async () => {
       // Arrange
       const like = new Like({
         commentId: dummyComment.id,
         owner: dummyUserId,
       });
 
-      // add user
       await UsersTableTestHelper.addUser({ id: dummyUserId });
-      // add thread
       await ThreadsTableTestHelper.addThread({ ...dummyThread, owner: dummyUserId });
-      // add comments
       await CommentsTableTestHelper.addComment({ ...dummyComment, owner: dummyUserId });
-      // add like
       await CommentLikesTableTestHelper.addLike({ id: 'like-123', ...like });
 
       const commentLikeRepositoryPostgres = new CommentLikeRepositoryPostgres(pool, {});
 
       // Action
-      await commentLikeRepositoryPostgres.deleteLike(like);
+      const result = await commentLikeRepositoryPostgres.deleteLike(like);
 
       // Assert
+      expect(result).toBe(true);
       const likes = await CommentLikesTableTestHelper.findLikeById('like-123');
       expect(likes).toHaveLength(0);
     });
   });
+
 });

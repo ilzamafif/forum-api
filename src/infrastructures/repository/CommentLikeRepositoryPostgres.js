@@ -40,7 +40,9 @@ class CommentLikeRepositoryPostgres extends CommentLikeRepository {
       values: [commentId, owner],
     };
 
-    await this._pool.query(query);
+    const result = await this._pool.query(query);
+
+    return result.rowCount > 0;
   }
 
   async verifyUserCommentLike(like) {
